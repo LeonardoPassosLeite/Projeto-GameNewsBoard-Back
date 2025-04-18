@@ -46,8 +46,8 @@ builder.Services.AddControllers();
 
 // HttpClient + DI
 builder.Services.AddHttpClient();
-// builder.Services.AddScoped<IGameNewsRepository, GameNewsRepository>();
 builder.Services.AddScoped<IGameNewsService, GameNewsService>();
+builder.Services.AddScoped<IIgdbGameService, IgdbGameService>();
 
 // CORS
 builder.Services.AddCors(options =>

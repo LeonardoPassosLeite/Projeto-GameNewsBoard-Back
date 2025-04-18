@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AutoMapper;
-using GameNewsBoard.Application.DTOs;
 using GameNewsBoard.Application.IServices;
+using GameNewsBoard.Application.Responses.DTOs;
 using GameNewsBoard.Infrastructure.ExternalDtos;
 using GameNewsBoard.Infrastructure.Helpers;
 using Microsoft.Extensions.Configuration;
@@ -12,7 +12,6 @@ namespace GameNewsBoard.Infrastructure.Services
     public class GameNewsService : IGameNewsService
     {
         private readonly HttpClient _httpClient;
-
         private readonly IMapper _mapper;
         private readonly string _apiKey;
         private readonly string _baseUrl;

@@ -1,5 +1,5 @@
-using GameNewsBoard.Application.DTOs;
 using GameNewsBoard.Application.IServices;
+using GameNewsBoard.Application.Responses.DTOs;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GameNewsBoard.Api.Controllers
