@@ -2,6 +2,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\GameNewsBoard.Domain\GameNewsBoard.Domain.csproj" />
+    <ProjectReference Include="..\GameNewsBoard.Shared\GameNewsBoard.Shared.csproj" />
   </ItemGroup>
 
   <ItemGroup>

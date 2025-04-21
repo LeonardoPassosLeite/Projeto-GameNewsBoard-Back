@@ -1,20 +1,16 @@
-
-
-using GameNewsBoard.Api.Configurations;
-using GameNewsBoard.Application.IServices;
+using GameNewsBoard.Api.Configurations;  // Adicione essa linha para referenciar as configurações
 using GameNewsBoard.Application.Mapping;
 using GameNewsBoard.Infrastructure.Services;
+using GameNewsBoard.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configuração dos Settings
 builder.Services.Configure<NewsDataSettings>(builder.Configuration.GetSection("NewsData"));
 
-// Swagger + Controllers
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
-    // Adicionar o esquema de segurança para Bearer Token
     c.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
     {
         Description = "JWT Authorization header using the Bearer scheme. Example: \"Authorization: Bearer {token}\"",
@@ -39,15 +35,16 @@ builder.Services.AddSwaggerGen(c =>
     });
 });
 
-builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddAutoMapper(typeof(MappingProfile), typeof(ExtenalMappingProfile));
 
+builder.Services.AddDbContext<AppDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+ 
+builder.Services.AddInfrastructureServices();  
 
 builder.Services.AddControllers();
 
-// HttpClient + DI
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<IGameNewsService, GameNewsService>();
-builder.Services.AddScoped<IIgdbGameService, IgdbGameService>();
 
 // CORS
 builder.Services.AddCors(options =>

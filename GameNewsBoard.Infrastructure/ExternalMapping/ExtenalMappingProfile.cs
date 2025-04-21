@@ -4,9 +4,9 @@ using GameNewsBoard.Infrastructure.ExternalDtos;
 
 namespace GameNewsBoard.Application.Mapping
 {
-    public class MappingProfile : Profile
+    public class ExtenalMappingProfile : Profile
     {
-        public MappingProfile()
+        public ExtenalMappingProfile()
         {
             CreateMap<GameNewsDto, GameNewsArticleResponse>();
 
