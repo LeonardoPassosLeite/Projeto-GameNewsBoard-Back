@@ -1,4 +1,4 @@
-using GameNewsBoard.Application.Repositories;
+using GameNewsBoard.Application.IRepository;
 using GameNewsBoard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -26,6 +26,11 @@ namespace GameNewsBoard.Infrastructure.Repositories
                 await _context.Games.AddRangeAsync(newGames);
                 await _context.SaveChangesAsync();
             }
+        }
+
+        public async Task<Game?> GetByIdAsync(int id)
+        {
+            return await _context.Games.FirstOrDefaultAsync(g => g.Id == id);
         }
 
         public async Task<(IEnumerable<Game> games, int totalCount)> GetGamesExclusivePlatformAsync(
@@ -63,7 +68,7 @@ namespace GameNewsBoard.Infrastructure.Repositories
 
                             if (platform == Platform.PCMicrosoftWindows)
                                 return gamePlatforms.Contains("PC (Microsoft Windows)");
-                            
+
                             var onlyLineagePlatforms = gamePlatforms.All(p => lineage.Contains(p));
                             var hasSelectedPlatform = gamePlatforms.Contains(selectedPlatformName);
 
@@ -102,6 +107,13 @@ namespace GameNewsBoard.Infrastructure.Repositories
             var games = await query.Skip(offset).Take(pageSize).ToListAsync(cancellationToken);
 
             return (games, totalCount);
+        }
+
+        public async Task<List<Game>> GetByTitlesAsync(List<string> titles)
+        {
+            return await _context.Games
+                .Where(g => titles.Contains(g.Title.ToLower()))
+                .ToListAsync();
         }
     }
 }

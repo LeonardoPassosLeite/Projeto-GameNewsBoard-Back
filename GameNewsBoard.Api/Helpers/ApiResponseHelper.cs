@@ -1,38 +1,66 @@
+using Microsoft.AspNetCore.Mvc;
+using GameNewsBoard.Api.Models.Responses;
 using GameNewsBoard.Application.DTOs.Shared;
 using GameNewsBoard.Application.Results;
 
-namespace GameNewsBoard.Api.Helpers
+namespace GameNewsBoard.Api.Helpers;
+
+public static class ApiResponseHelper
 {
-    public static class ApiResponseHelper
+    public static ApiResponse<string> CreateSuccess(string message)
     {
-        public static ApiResponse<PaginatedResult<T>> CreatePaginatedSuccess<T>(
-            IEnumerable<T> items, int page, int pageSize, string message, int totalCount, int totalPages)
+        return new ApiResponse<string>
         {
-            return new ApiResponse<PaginatedResult<T>>
-            {
-                Message = message,
-                Data = new PaginatedResult<T>(items.ToList(), page, pageSize, totalCount, totalPages)  
-            };
-        }
+            Message = message,
+            Data = message
+        };
+    }
 
-        public static ApiResponse<PaginatedFromApiResult<T>> CreatePaginatedSuccess<T>(
-            IEnumerable<T> items, int page, int pageSize, string message)
+    public static ApiResponse<T> CreateSuccess<T>(T data, string message = "Operação realizada com sucesso")
+    {
+        return new ApiResponse<T>
         {
-            return new ApiResponse<PaginatedFromApiResult<T>>
-            {
-                Message = message,
-                Data = new PaginatedFromApiResult<T>(items.ToList(), page, pageSize)  
-            };
-        }
+            Message = message,
+            Data = data
+        };
+    }
 
-        public static ApiResponse<PaginatedFromApiResult<T>> CreateEmptyPaginated<T>(
-            int page, int pageSize, string message)
+    public static ObjectResult CreateError(string message, string? detail = null, int statusCode = 500)
+    {
+        var errorResponse = new ApiErrorResponse(message, detail);
+        return new ObjectResult(errorResponse)
         {
-            return new ApiResponse<PaginatedFromApiResult<T>>
-            {
-                Message = message,
-                Data = PaginatedResultHelper.Empty<T>(page, pageSize) 
-            };
-        }
+            StatusCode = statusCode
+        };
+    }
+
+    public static ApiResponse<PaginatedResult<T>> CreatePaginatedSuccess<T>(
+        IEnumerable<T> items, int page, int pageSize, string message, int totalCount, int totalPages)
+    {
+        return new ApiResponse<PaginatedResult<T>>
+        {
+            Message = message,
+            Data = new PaginatedResult<T>(items.ToList(), page, pageSize, totalCount, totalPages)
+        };
+    }
+
+    public static ApiResponse<PaginatedFromApiResult<T>> CreatePaginatedSuccess<T>(
+        IEnumerable<T> items, int page, int pageSize, string message)
+    {
+        return new ApiResponse<PaginatedFromApiResult<T>>
+        {
+            Message = message,
+            Data = new PaginatedFromApiResult<T>(items.ToList(), page, pageSize)
+        };
+    }
+
+    public static ApiResponse<PaginatedFromApiResult<T>> CreateEmptyPaginated<T>(
+        int page, int pageSize, string message)
+    {
+        return new ApiResponse<PaginatedFromApiResult<T>>
+        {
+            Message = message,
+            Data = PaginatedResultHelper.Empty<T>(page, pageSize)
+        };
     }
 }

@@ -12,7 +12,7 @@ public class GameConfiguration : IEntityTypeConfiguration<Game>
 
         builder.Property(g => g.Platform)
             .IsRequired()
-            .HasMaxLength(100);
+            .HasMaxLength(255);
 
         builder.Property(g => g.CoverImage)
             .IsRequired()

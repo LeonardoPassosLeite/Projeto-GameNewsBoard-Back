@@ -1,4 +1,4 @@
-using GameNewsBoard.Application.Responses.DTOs;
+using GameNewsBoard.Application.Responses.DTOs.Responses;
 
 namespace GameNewsBoard.Application.IServices
 {

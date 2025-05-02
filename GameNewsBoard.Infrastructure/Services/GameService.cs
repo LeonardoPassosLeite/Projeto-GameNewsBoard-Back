@@ -7,8 +7,8 @@ using GameNewsBoard.Application.DTOs.Shared;
 using GameNewsBoard.Application.Exceptions;
 using GameNewsBoard.Application.Exceptions.Api;
 using GameNewsBoard.Application.Exceptions.Domain;
+using GameNewsBoard.Application.IRepository;
 using GameNewsBoard.Application.IServices;
-using GameNewsBoard.Application.Repositories;
 using GameNewsBoard.Application.Responses.DTOs;
 using GameNewsBoard.Application.Validators;
 using GameNewsBoard.Domain.Entities;
@@ -48,26 +48,41 @@ namespace GameNewsBoard.Infrastructure.Services
             {
                 PaginationValidator.Validate(page, pageSize);
 
-                var dataQuery = ExternalApiQueryStore.Igdb.GenerateGamesQuery(page, pageSize);
-                var dataRequest = CreateIgdbRequest(dataQuery);
+                var query = ExternalApiQueryStore.Igdb.GenerateGamesQuery(page, pageSize);
+                var request = CreateIgdbRequest(query);
 
-                var games = await SendIgdbRequestAsync(dataRequest, cancellationToken);
+                var igdbGames = await SendIgdbRequestAsync<IgdbGameDto>(request, cancellationToken);
 
-                return new PaginatedFromApiResult<GameResponse>(games, page, pageSize);
+                var titles = igdbGames.Select(g => g.Name.Trim().ToLower()).ToList();
+
+                var savedGames = await _gameRepository.GetByTitlesAsync(titles);
+
+                var responses = igdbGames.Select(igdbGame =>
+                {
+                    var savedGame = savedGames.FirstOrDefault(g =>
+                        g.Title.Trim().Equals(igdbGame.Name.Trim(), StringComparison.OrdinalIgnoreCase));
+
+                    var response = _mapper.Map<GameResponse>(igdbGame);
+                    response.Id = savedGame?.Id ?? 0; // Set the database ID if exists, otherwise 0
+
+                    return response;
+                }).ToList();
+
+                return new PaginatedFromApiResult<GameResponse>(responses, page, pageSize);
             }
             catch (InvalidPaginationException ex)
             {
-                _logger.LogWarning(ex, "Parâmetros inválidos para a paginação.");
+                _logger.LogWarning(ex, "Invalid pagination parameters.");
                 throw;
             }
             catch (IgdbApiException ex)
             {
-                _logger.LogError(ex, "Erro na comunicação com a IGDB.");
+                _logger.LogError(ex, "Error communicating with IGDB.");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro inesperado ao buscar jogos.");
+                _logger.LogError(ex, "Unexpected error while fetching games.");
                 throw;
             }
         }
@@ -85,15 +100,15 @@ namespace GameNewsBoard.Infrastructure.Services
                     var dataQuery = ExternalApiQueryStore.Igdb.GenerateGamesQueryWithOffset(offset, batchSize);
                     var dataRequest = CreateIgdbRequest(dataQuery);
 
-                    var games = await SendIgdbRequestAsync(dataRequest, cancellationToken);
+                    var igdbGames = await SendIgdbRequestAsync<IgdbGameDto>(dataRequest, cancellationToken);
 
-                    if (games == null || !games.Any())
+                    if (igdbGames == null || !igdbGames.Any())
                     {
                         hasMoreGames = false;
                         continue;
                     }
 
-                    var gamesToSave = _mapper.Map<IEnumerable<Game>>(games);
+                    var gamesToSave = _mapper.Map<IEnumerable<Game>>(igdbGames);
 
                     foreach (var game in gamesToSave)
                     {
@@ -107,12 +122,12 @@ namespace GameNewsBoard.Infrastructure.Services
             }
             catch (IgdbApiException ex)
             {
-                _logger.LogError(ex, "Erro ao acessar a API da IGDB durante SaveGamesAsync.");
+                _logger.LogError(ex, "Error accessing IGDB API during SaveGamesAsync.");
                 throw;
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Erro inesperado ao salvar jogos em lotes.");
+                _logger.LogError(ex, "Unexpected error while saving games in batch.");
                 throw;
             }
         }
@@ -205,8 +220,7 @@ namespace GameNewsBoard.Infrastructure.Services
             }
         }
 
-
-        private async Task<List<GameResponse>> SendIgdbRequestAsync(HttpRequestMessage request, CancellationToken cancellationToken)
+        private async Task<List<T>> SendIgdbRequestAsync<T>(HttpRequestMessage request, CancellationToken cancellationToken)
         {
             try
             {
@@ -214,28 +228,26 @@ namespace GameNewsBoard.Infrastructure.Services
                 var content = await response.Content.ReadAsStringAsync(cancellationToken);
 
                 if (!response.IsSuccessStatusCode)
-                    throw new IgdbApiException($"Erro IGDB: {response.StatusCode}, Resposta: {content}");
+                    throw new IgdbApiException($"IGDB error: {response.StatusCode}, Response: {content}");
 
-                var igdbGames = JsonSerializer.Deserialize<List<IgdbGameDto>>(content, new JsonSerializerOptions
+                var result = JsonSerializer.Deserialize<List<T>>(content, new JsonSerializerOptions
                 {
                     PropertyNameCaseInsensitive = true
-                }) ?? new List<IgdbGameDto>();
+                }) ?? new List<T>();
 
-                var gameResponses = _mapper.Map<List<GameResponse>>(igdbGames);
-
-                return gameResponses;
+                return result;
             }
             catch (HttpRequestException ex)
             {
-                throw new IgdbApiException("Erro de rede ao tentar acessar a IGDB.", ex);
+                throw new IgdbApiException("Network error when accessing IGDB.", ex);
             }
             catch (TaskCanceledException ex)
             {
-                throw new IgdbApiException("Timeout na requisição para a IGDB.", ex);
+                throw new IgdbApiException("Request timeout when accessing IGDB.", ex);
             }
             catch (Exception ex)
             {
-                throw new IgdbApiException("Erro inesperado ao acessar a IGDB.", ex);
+                throw new IgdbApiException("Unexpected error when accessing IGDB.", ex);
             }
         }
 

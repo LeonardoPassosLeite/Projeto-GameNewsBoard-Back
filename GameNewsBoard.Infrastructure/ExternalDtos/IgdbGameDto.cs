@@ -4,6 +4,8 @@ namespace GameNewsBoard.Infrastructure.ExternalDtos
 {
     public class IgdbGameDto
     {
+        [JsonPropertyName("id")]
+        public long Id { get; set; }
         public string Name { get; set; } = string.Empty;
 
         [JsonPropertyName("aggregated_rating")]
@@ -30,7 +32,7 @@ namespace GameNewsBoard.Infrastructure.ExternalDtos
     public class IgdbPlatformDto
     {
         public int Id { get; set; }
-        
+
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
     }

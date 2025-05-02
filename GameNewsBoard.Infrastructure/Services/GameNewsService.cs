@@ -1,7 +1,7 @@
 using System.Text.Json;
 using AutoMapper;
 using GameNewsBoard.Application.IServices;
-using GameNewsBoard.Application.Responses.DTOs;
+using GameNewsBoard.Application.Responses.DTOs.Responses;
 using GameNewsBoard.Infrastructure.ExternalDtos;
 using GameNewsBoard.Infrastructure.Helpers;
 using Microsoft.Extensions.Configuration;

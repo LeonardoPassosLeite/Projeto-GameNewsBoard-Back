@@ -1,4 +1,4 @@
-namespace GameNewsBoard.Application.Responses.DTOs
+namespace GameNewsBoard.Application.Responses.DTOs.Responses
 {
     public class GameNewsResponse
     {
