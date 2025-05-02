@@ -1,5 +1,5 @@
 using GameNewsBoard.Application.Exceptions;
-using GameNewsBoard.Application.Exceptions.Domain;
+using GameNewsBoard.Domain.Enums;
 
 namespace GameNewsBoard.Application.Validators
 {

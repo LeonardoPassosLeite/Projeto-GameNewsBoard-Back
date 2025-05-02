@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameNewsBoard.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250429103643_NomeDaMigration")]
+    [Migration("20250502192229_NomeDaMigration")]
     partial class NomeDaMigration
     {
         /// <inheritdoc />
@@ -59,6 +59,31 @@ namespace GameNewsBoard.Infrastructure.Migrations
                     b.ToTable("Games");
                 });
 
+            modelBuilder.Entity("GameNewsBoard.Domain.Entities.StatusGame", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("GameId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("Status")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uuid");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("GameId");
+
+                    b.HasIndex("UserId", "GameId")
+                        .IsUnique();
+
+                    b.ToTable("StatusGame");
+                });
+
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierList", b =>
                 {
                     b.Property<Guid>("Id")
@@ -81,7 +106,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TierLists");
+                    b.ToTable("TierList");
                 });
 
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierListEntry", b =>
@@ -104,7 +129,8 @@ namespace GameNewsBoard.Infrastructure.Migrations
 
                     b.HasIndex("GameId");
 
-                    b.HasIndex("TierListId");
+                    b.HasIndex("TierListId", "GameId")
+                        .IsUnique();
 
                     b.ToTable("TierListEntry");
                 });
@@ -156,6 +182,25 @@ namespace GameNewsBoard.Infrastructure.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("GameNewsBoard.Domain.Entities.StatusGame", b =>
+                {
+                    b.HasOne("GameNewsBoard.Domain.Entities.Game", "Game")
+                        .WithMany()
+                        .HasForeignKey("GameId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("GameNewsBoard.Domain.Entities.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Game");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierList", b =>

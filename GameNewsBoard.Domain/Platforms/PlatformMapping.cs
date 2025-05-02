@@ -1,3 +1,5 @@
+using GameNewsBoard.Domain.Enums;
+
 public static class PlatformMapping
 {
     private static readonly Dictionary<Platform, string> PlatformNames = new Dictionary<Platform, string>

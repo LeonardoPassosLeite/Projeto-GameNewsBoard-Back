@@ -10,7 +10,6 @@ public interface ITierListRepository
     Task<TierList?> GetByIdAsync(Guid id);
     Task<IEnumerable<TierList>> GetByUserAsync(Guid userId);
     void Remove(TierList tierList);
-    Task<bool> ExistsAsync(Guid tierListId);
     Task SaveChangesAsync();
 
 }

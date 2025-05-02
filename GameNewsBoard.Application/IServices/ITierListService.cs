@@ -1,6 +1,7 @@
 using GameNewsBoard.Application.DTOs.Requests;
 using GameNewsBoard.Application.Responses.DTOs.Responses;
 using GameNewsBoard.Domain.Commons;
+using GameNewsBoard.Domain.Enums;
 
 namespace GameNewsBoard.Application.IServices
 {

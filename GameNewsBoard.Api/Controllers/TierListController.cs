@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using GameNewsBoard.Infrastructure.Auth;
 using GameNewsBoard.Infrastructure.Services.Image;
+using GameNewsBoard.Domain.Enums;
 
 namespace GameNewsBoard.Api.Controllers;
 

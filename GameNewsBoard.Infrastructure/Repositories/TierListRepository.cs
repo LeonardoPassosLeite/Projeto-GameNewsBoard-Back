@@ -10,12 +10,17 @@ namespace GameNewsBoard.Infrastructure.Repositories
 
         public TierListRepository(AppDbContext context)
         {
-            _context = context;
+            _context = context ?? throw new ArgumentNullException(nameof(context));
         }
 
         public async Task AddAsync(TierList tierList)
         {
             await _context.TierLists.AddAsync(tierList);
+        }
+
+        public async Task AddEntryAsync(TierListEntry entry)
+        {
+            await _context.Set<TierListEntry>().AddAsync(entry);
         }
 
         public async Task<TierList?> GetByIdAsync(Guid id)
@@ -24,11 +29,6 @@ namespace GameNewsBoard.Infrastructure.Repositories
                 .Include(t => t.Entries)
                     .ThenInclude(e => e.Game)
                 .FirstOrDefaultAsync(t => t.Id == id);
-        }
-
-        public async Task AddEntryAsync(TierListEntry entry)
-        {
-            await _context.Set<TierListEntry>().AddAsync(entry);
         }
 
         public async Task<IEnumerable<TierList>> GetByUserAsync(Guid userId)
@@ -43,11 +43,6 @@ namespace GameNewsBoard.Infrastructure.Repositories
         public void Remove(TierList tierList)
         {
             _context.TierLists.Remove(tierList);
-        }
-
-        public async Task<bool> ExistsAsync(Guid tierListId)
-        {
-            return await _context.TierLists.AnyAsync(t => t.Id == tierListId);
         }
 
         public async Task SaveChangesAsync()

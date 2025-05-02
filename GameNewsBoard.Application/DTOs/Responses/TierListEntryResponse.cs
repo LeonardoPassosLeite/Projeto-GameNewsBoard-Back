@@ -1,3 +1,5 @@
+using GameNewsBoard.Domain.Enums;
+
 namespace GameNewsBoard.Application.Responses.DTOs.Responses;
 
 public class TierListEntryResponse

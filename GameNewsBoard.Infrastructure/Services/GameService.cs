@@ -12,6 +12,7 @@ using GameNewsBoard.Application.IServices;
 using GameNewsBoard.Application.Responses.DTOs;
 using GameNewsBoard.Application.Validators;
 using GameNewsBoard.Domain.Entities;
+using GameNewsBoard.Domain.Enums;
 using GameNewsBoard.Infrastructure.ExternalDtos;
 using GameNewsBoard.Infrastructure.Helpers;
 using GameNewsBoard.Infrastructure.Queries;
@@ -260,6 +261,5 @@ namespace GameNewsBoard.Infrastructure.Services
             request.Content = new StringContent(query, Encoding.UTF8, "text/plain");
             return request;
         }
-
     }
 }

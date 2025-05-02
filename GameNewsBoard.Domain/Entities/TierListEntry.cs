@@ -1,3 +1,5 @@
+using GameNewsBoard.Domain.Enums;
+
 namespace GameNewsBoard.Domain.Entities
 {
     public class TierListEntry

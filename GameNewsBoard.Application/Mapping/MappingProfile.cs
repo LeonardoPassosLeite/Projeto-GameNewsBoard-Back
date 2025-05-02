@@ -25,8 +25,12 @@ namespace GameNewsBoard.Application.Mapping
             CreateMap<TierListEntry, TierListEntryResponse>();
 
             CreateMap<User, UserProfileResponse>()
-               .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
+                .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.Id));
 
+            CreateMap<StatusGame, StatusGameResponse>()
+                .ForMember(dest => dest.GameId, opt => opt.MapFrom(src => src.GameId))
+                .ForMember(dest => dest.Game, opt => opt.MapFrom(src => src.Game))
+                .ForMember(dest => dest.Status, opt => opt.MapFrom(src => src.Status));
         }
 
         private static DateTimeOffset ParseDate(string released)

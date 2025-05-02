@@ -1,5 +1,7 @@
 using GameNewsBoard.Application.IRepository;
 using GameNewsBoard.Domain.Entities;
+using GameNewsBoard.Domain.Enums;
+using GameNewsBoard.Domain.Platforms;
 using Microsoft.EntityFrameworkCore;
 
 namespace GameNewsBoard.Infrastructure.Repositories

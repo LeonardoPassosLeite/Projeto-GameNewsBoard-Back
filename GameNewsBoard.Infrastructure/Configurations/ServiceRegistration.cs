@@ -18,16 +18,20 @@ namespace GameNewsBoard.Infrastructure.Services
             services.AddScoped<IGameRepository, GameRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 
-            // Serviços de autenticação
+            //Auth
             services.AddSingleton<ITokenService, TokenService>();
             services.AddScoped<ICookieService, CookieService>();
             services.AddScoped<IUserService, UserService>();
 
             services.AddScoped<IAuthService, AuthService>();
 
-            // Serviço de TierList
+            //TierList
             services.AddScoped<ITierListService, TierListService>();
             services.AddScoped<ITierListRepository, TierListRepository>();
+
+            //Status
+            services.AddScoped<IStatusGameService, StatusGameService>();
+            services.AddScoped<IStatusGameRepository, StatusGameRepository>();
 
             services.AddScoped<IUploadedImageService, UploadedImageService>();
             services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();

@@ -15,10 +15,12 @@ public class TierListEntryConfiguration : IEntityTypeConfiguration<TierListEntry
               builder.HasOne(e => e.TierList)
                      .WithMany(t => t.Entries)
                      .HasForeignKey(e => e.TierListId)
-                     .OnDelete(DeleteBehavior.Cascade); 
+                     .OnDelete(DeleteBehavior.Cascade);
 
               builder.Property(e => e.Tier)
                      .HasConversion<string>()
                      .IsRequired();
+
+              builder.HasIndex(e => new { e.TierListId, e.GameId }).IsUnique();
        }
 }
