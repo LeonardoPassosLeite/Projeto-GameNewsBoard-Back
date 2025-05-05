@@ -29,7 +29,8 @@ namespace GameNewsBoard.Domain.Entities
 
         public void UpdateTier(TierLevel newTier)
         {
-            Tier = newTier;
+            if (Tier != newTier)
+                Tier = newTier;
         }
     }
 }

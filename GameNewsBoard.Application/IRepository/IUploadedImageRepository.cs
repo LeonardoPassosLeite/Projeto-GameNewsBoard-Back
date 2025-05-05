@@ -6,4 +6,5 @@ public interface IUploadedImageRepository
     Task<UploadedImage?> GetByIdAsync(Guid id);
     Task<IEnumerable<UploadedImage>> GetUnusedByUserAsync(Guid userId);
     Task SaveChangesAsync();
+    Task DeleteAsync(UploadedImage image);
 }

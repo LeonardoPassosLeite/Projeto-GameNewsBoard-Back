@@ -1,7 +1,3 @@
-
-
-using GameNewsBoard.Domain.Enums;
-
 namespace GameNewsBoard.Domain.Entities
 {
     public class TierList
@@ -31,23 +27,6 @@ namespace GameNewsBoard.Domain.Entities
 
             if (newImageUrl is not null)
                 ImageUrl = newImageUrl;
-        }
-
-        public void AddGameToTier(int gameId, TierLevel tier)
-        {
-            if (Entries.Any(e => e.GameId == gameId))
-                throw new InvalidOperationException("Esse jogo já está no ranking.");
-
-            Entries.Add(TierListEntry.Create(gameId, tier, this.Id));
-        }
-
-        public void UpdateGameTier(int gameId, TierLevel newTier)
-        {
-            var entry = Entries.FirstOrDefault(e => e.GameId == gameId);
-            if (entry == null)
-                throw new InvalidOperationException("Jogo não encontrado no ranking.");
-
-            entry.UpdateTier(newTier);
         }
 
         public void RemoveGameFromTier(int gameId)

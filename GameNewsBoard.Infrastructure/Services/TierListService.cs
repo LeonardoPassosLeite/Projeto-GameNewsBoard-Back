@@ -5,7 +5,6 @@ using GameNewsBoard.Application.IServices;
 using GameNewsBoard.Application.Responses.DTOs.Responses;
 using GameNewsBoard.Domain.Commons;
 using GameNewsBoard.Domain.Entities;
-using GameNewsBoard.Domain.Enums;
 using Microsoft.Extensions.Logging;
 
 namespace GameNewsBoard.Infrastructure.Services
@@ -30,11 +29,11 @@ namespace GameNewsBoard.Infrastructure.Services
         }
 
         #region Tier Methods
-        public async Task<Result> CreateTierListAsync(TierListRequest request)
+        public async Task<Result> CreateTierListAsync(Guid userId, TierListRequest request)
         {
             try
             {
-                var tierList = new TierList(request.UserId, request.Title, request.ImageUrl);
+                var tierList = new TierList(userId, request.Title, request.ImageUrl);
 
                 await _tierListRepository.AddAsync(tierList);
                 await _tierListRepository.SaveChangesAsync();
@@ -48,7 +47,7 @@ namespace GameNewsBoard.Infrastructure.Services
             }
         }
 
-        public async Task<Result> UpdateTierListAsync(Guid tierListId, string? newTitle = null, string? newImage = null)
+        public async Task<Result> UpdateTierListAsync(Guid tierListId, UpdateTierListRequest request)
         {
             var tierList = await _tierListRepository.GetByIdAsync(tierListId);
             if (tierList == null)
@@ -56,7 +55,7 @@ namespace GameNewsBoard.Infrastructure.Services
 
             try
             {
-                tierList.UpdateInfo(newTitle, newImage);
+                tierList.UpdateInfo(request.NewTitle, request.NewImageUrl);
                 await _tierListRepository.SaveChangesAsync();
                 return Result.Success();
             }
@@ -77,62 +76,39 @@ namespace GameNewsBoard.Infrastructure.Services
             return Result.Success();
         }
 
-        public async Task<Result<TierListResponse>> GetTierListByIdAsync(Guid tierListId)
+        public async Task<Result<IEnumerable<TierListResponse>>> GetTierListsByUserAsync(Guid userId)
         {
-            var tierList = await _tierListRepository.GetByIdAsync(tierListId);
-            if (tierList == null)
-                return Result<TierListResponse>.Failure("Tier não encontrado.");
-
-            var response = _mapper.Map<TierListResponse>(tierList);
-            return Result<TierListResponse>.Success(response);
+            var tiers = await _tierListRepository.GetByUserAsync(userId);
+            var response = _mapper.Map<IEnumerable<TierListResponse>>(tiers);
+            return Result<IEnumerable<TierListResponse>>.Success(response);
         }
         #endregion
 
         #region Game In Tier Methods
-        public async Task<Result> AddGameToTierAsync(Guid tierListId, int gameId, TierLevel tier)
+        public async Task<Result> SetGameTierAsync(Guid tierListId, TierListEntryRequest request)
         {
             var tierList = await _tierListRepository.GetByIdAsync(tierListId);
             if (tierList == null)
                 return Result.Failure("Tier não encontrado.");
 
-            var game = await _gameRepository.GetByIdAsync(gameId);
+            var game = await _gameRepository.GetByIdAsync(request.GameId);
             if (game == null)
                 return Result.Failure("Jogo não encontrado.");
 
-            if (tierList.Entries.Any(e => e.GameId == gameId))
-                return Result.Failure("Esse jogo já está no ranking.");
+            var existingEntry = tierList.Entries.FirstOrDefault(e => e.GameId == request.GameId);
 
-            try
+            if (existingEntry is null)
             {
-                var newEntry = TierListEntry.Create(gameId, tier, tierList.Id);
-
+                var newEntry = TierListEntry.Create(request.GameId, request.Tier, tierList.Id);
                 await _tierListRepository.AddEntryAsync(newEntry);
-
-                await _tierListRepository.SaveChangesAsync();
-
-                return Result.Success();
             }
-            catch (Exception ex)
+            else
             {
-                return Result.Failure(ex.Message);
+                existingEntry.UpdateTier(request.Tier);
             }
-        }
-        public async Task<Result> UpdateGameTierAsync(Guid tierListId, int gameId, TierLevel newTier)
-        {
-            var tierList = await _tierListRepository.GetByIdAsync(tierListId);
-            if (tierList == null)
-                return Result.Failure("Tier não encontrado.");
 
-            try
-            {
-                tierList.UpdateGameTier(gameId, newTier);
-                await _tierListRepository.SaveChangesAsync();
-                return Result.Success();
-            }
-            catch (InvalidOperationException ex)
-            {
-                return Result.Failure(ex.Message);
-            }
+            await _tierListRepository.SaveChangesAsync();
+            return Result.Success();
         }
 
         public async Task<Result> RemoveGameFromTierAsync(Guid tierListId, int gameId)
@@ -145,6 +121,18 @@ namespace GameNewsBoard.Infrastructure.Services
             await _tierListRepository.SaveChangesAsync();
             return Result.Success();
         }
+
+        public async Task<Result<TierListResponse>> GetTierListByIdAsync(Guid tierListId)
+        {
+            var tierList = await _tierListRepository.GetByIdAsync(tierListId);
+
+            if (tierList == null)
+                return Result<TierListResponse>.Failure("Tier não encontrado.");
+
+            var response = _mapper.Map<TierListResponse>(tierList);
+            return Result<TierListResponse>.Success(response);
+        }
+
         #endregion
     }
 }

@@ -1,6 +1,7 @@
 using GameNewsBoard.Application.IRepository;
 using GameNewsBoard.Application.IServices;
 using GameNewsBoard.Application.IServices.Auth;
+using GameNewsBoard.Application.IServices.Images;
 using GameNewsBoard.Infrastructure.Auth;
 using GameNewsBoard.Infrastructure.Repositories;
 using GameNewsBoard.Infrastructure.Services.Auth;
@@ -35,7 +36,7 @@ namespace GameNewsBoard.Infrastructure.Services
 
             services.AddScoped<IUploadedImageService, UploadedImageService>();
             services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();
-            services.AddScoped<PhysicalImageService>();
+            services.AddScoped<IPhysicalImageService, PhysicalImageService>();
         }
     }
 }

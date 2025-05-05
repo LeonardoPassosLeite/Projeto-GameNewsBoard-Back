@@ -34,5 +34,11 @@ namespace GameNewsBoard.Infrastructure.Repositories
         {
             return _context.SaveChangesAsync();
         }
+
+        public Task DeleteAsync(UploadedImage image)
+        {
+            _context.UploadedImages.Remove(image);
+            return Task.CompletedTask;
+        }
     }
 }

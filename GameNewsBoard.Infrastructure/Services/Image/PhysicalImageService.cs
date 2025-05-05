@@ -1,8 +1,9 @@
+using GameNewsBoard.Application.IServices.Images;
 using Microsoft.AspNetCore.Http;
 
 namespace GameNewsBoard.Infrastructure.Services.Image
 {
-    public class PhysicalImageService
+    public class PhysicalImageService : IPhysicalImageService
     {
         private readonly string _uploadsFolder;
 
@@ -26,6 +27,15 @@ namespace GameNewsBoard.Infrastructure.Services.Image
             }
 
             return $"/uploads/{fileName}";
+        }
+
+        public Task DeleteFileAsync(string imageUrl)
+        {
+            var filePath = Path.Combine(Directory.GetCurrentDirectory(), imageUrl.TrimStart('/'));
+            if (File.Exists(filePath))
+                File.Delete(filePath);
+
+            return Task.CompletedTask;
         }
     }
 }

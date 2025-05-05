@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameNewsBoard.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250502192229_NomeDaMigration")]
+    [Migration("20250504002243_NomeDaMigration")]
     partial class NomeDaMigration
     {
         /// <inheritdoc />
