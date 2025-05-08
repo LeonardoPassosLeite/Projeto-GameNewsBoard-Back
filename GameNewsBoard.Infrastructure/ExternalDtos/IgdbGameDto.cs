@@ -1,4 +1,5 @@
 using System.Text.Json.Serialization;
+using GameNewsBoard.Infrastructure.ExternalDtos.Commons;
 
 namespace GameNewsBoard.Infrastructure.ExternalDtos
 {
@@ -22,18 +23,5 @@ namespace GameNewsBoard.Infrastructure.ExternalDtos
 
         [JsonPropertyName("platforms")]
         public List<IgdbPlatformDto> Platforms { get; set; } = new();
-    }
-
-    public class IgdbCoverDto
-    {
-        public string Url { get; set; } = string.Empty;
-    }
-
-    public class IgdbPlatformDto
-    {
-        public int Id { get; set; }
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = string.Empty;
     }
 }

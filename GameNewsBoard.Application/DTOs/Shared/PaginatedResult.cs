@@ -5,6 +5,7 @@ namespace GameNewsBoard.Application.DTOs.Shared
         public List<T> Items { get; set; } = new();
         public int Page { get; set; }
         public int PageSize { get; set; }
+        public List<string>? Errors { get; set; }  // Adicionado
     }
 
     public class PaginatedResult<T> : PaginatedBaseResult<T>

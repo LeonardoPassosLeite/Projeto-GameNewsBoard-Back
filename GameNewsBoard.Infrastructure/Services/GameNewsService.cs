@@ -42,9 +42,11 @@ namespace GameNewsBoard.Infrastructure.Services
             });
 
             if (gnewsData is null || gnewsData.Articles.Count == 0)
-                return new GameNewsResponse();
+                return new GameNewsResponse(); 
 
-            return _mapper.Map<GameNewsResponse>(gnewsData);
+            var mappedData = _mapper.Map<GameNewsResponse>(gnewsData);
+
+            return mappedData;
         }
     }
 }

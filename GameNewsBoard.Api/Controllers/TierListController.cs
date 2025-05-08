@@ -41,7 +41,10 @@ namespace GameNewsBoard.Api.Controllers
                 if (request.ImageId.HasValue)
                     await _uploadedImageService.MarkImageAsUsedAsync(request.ImageId.Value);
 
-                return Ok(ApiResponseHelper.CreateSuccess("Tier criado com sucesso"));
+                if (result.IsSuccess)
+                    return Ok(ApiResponseHelper.CreateSuccess(request, "Tier criado com sucesso uhullll"));
+
+                return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao criar tier.");
             }
             catch (Exception ex)
             {
@@ -59,7 +62,10 @@ namespace GameNewsBoard.Api.Controllers
                 if (!result.IsSuccess)
                     return ApiResponseHelper.CreateError("Erro ao atualizar tier", result.Error);
 
-                return Ok(ApiResponseHelper.CreateSuccess("Tier atualizado com sucesso"));
+                if (result.IsSuccess)
+                    return Ok(ApiResponseHelper.CreateSuccess(request, $"Tier Editado com sucesso: {tierListId}"));
+
+                return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao editar tier.");
             }
             catch (Exception ex)
             {
@@ -77,7 +83,10 @@ namespace GameNewsBoard.Api.Controllers
                 if (!result.IsSuccess)
                     return ApiResponseHelper.CreateError("Erro ao deletar tier", result.Error);
 
-                return Ok(ApiResponseHelper.CreateSuccess("Tier deletado com sucesso"));
+                if (result.IsSuccess)
+                    return Ok(ApiResponseHelper.CreateSuccess($"Tier Deletado com sucesso: {tierListId}"));
+
+                return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao deletar tier.");
             }
             catch (Exception ex)
             {
@@ -95,7 +104,12 @@ namespace GameNewsBoard.Api.Controllers
                 if (!result.IsSuccess)
                     return ApiResponseHelper.CreateError("Erro ao definir tier do jogo", result.Error);
 
-                return Ok(ApiResponseHelper.CreateSuccess("Tier do jogo definido com sucesso"));
+                var gameId = request.GameId;
+
+                if (result.IsSuccess)
+                    return Ok(ApiResponseHelper.CreateSuccess(new { GameId = gameId }, $"Tier do jogo '{gameId}' definido com sucesso"));
+
+                return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao criar a tier.");
             }
             catch (Exception ex)
             {
@@ -113,7 +127,10 @@ namespace GameNewsBoard.Api.Controllers
                 if (!result.IsSuccess)
                     return ApiResponseHelper.CreateError("Erro ao remover jogo do tier", result.Error);
 
-                return Ok(ApiResponseHelper.CreateSuccess("Jogo removido do tier com sucesso"));
+                if (result.IsSuccess)
+                    return Ok(ApiResponseHelper.CreateSuccess($"Jogo removido do tier com sucesso: {gameId}"));
+
+                return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao criar a tier.");
             }
             catch (Exception ex)
             {

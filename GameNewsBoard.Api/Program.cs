@@ -2,6 +2,7 @@ using GameNewsBoard.Api.Configurations;
 using GameNewsBoard.Application.Mapping;
 using GameNewsBoard.Application.Settings;
 using GameNewsBoard.Infrastructure;
+using GameNewsBoard.Infrastructure.Configurations;
 using GameNewsBoard.Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -15,7 +16,8 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<NewsDataSettings>(builder.Configuration.GetSection("NewsData"));
 builder.Services.Configure<BackendSettings>(builder.Configuration.GetSection("Backend"));
-builder.Services.AddAutoMapper(typeof(MappingProfile), typeof(ExtenalMappingProfile));
+builder.Services.Configure<IgdbSettings>(builder.Configuration.GetSection("Igdb"));
+builder.Services.AddAutoMapper(typeof(MappingProfile), typeof(ExternalMappingProfile));
 builder.Services.AddHttpClient();
 builder.Services.AddControllers();
 

@@ -18,9 +18,19 @@ namespace GameNewsBoard.Infrastructure.Helpers
             return $"{baseUrl}?q={encodedQuery}&lang=pt&token={apiKey}";
         }
 
+        public static string BuildIgdbUrl(string endpoint)
+        {
+            return $"https://api.igdb.com/v4/{endpoint}";
+        }
+
         public static string BuildIgdbGamesUrl()
         {
-            return "https://api.igdb.com/v4/games";
+            return BuildIgdbUrl("games");
+        }
+
+        public static string BuildMetacriticUrl(int year)
+        {
+            return $"https://www.metacritic.com/browse/game/all/all/coming-soon?releaseYear={year}";
         }
     }
 }

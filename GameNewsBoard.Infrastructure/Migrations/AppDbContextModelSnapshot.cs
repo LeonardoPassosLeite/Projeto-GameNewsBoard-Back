@@ -87,6 +87,9 @@ namespace GameNewsBoard.Infrastructure.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
+                    b.Property<Guid?>("ImageId")
+                        .HasColumnType("uuid");
+
                     b.Property<string>("ImageUrl")
                         .HasMaxLength(500)
                         .HasColumnType("character varying(500)");
@@ -100,6 +103,9 @@ namespace GameNewsBoard.Infrastructure.Migrations
                         .HasColumnType("uuid");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ImageId")
+                        .IsUnique();
 
                     b.HasIndex("UserId");
 
@@ -202,11 +208,18 @@ namespace GameNewsBoard.Infrastructure.Migrations
 
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierList", b =>
                 {
+                    b.HasOne("GameNewsBoard.Domain.Entities.UploadedImage", "Image")
+                        .WithOne()
+                        .HasForeignKey("GameNewsBoard.Domain.Entities.TierList", "ImageId")
+                        .OnDelete(DeleteBehavior.SetNull);
+
                     b.HasOne("GameNewsBoard.Domain.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Image");
 
                     b.Navigation("User");
                 });

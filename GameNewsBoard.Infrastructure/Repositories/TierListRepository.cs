@@ -31,6 +31,14 @@ namespace GameNewsBoard.Infrastructure.Repositories
                 .FirstOrDefaultAsync(t => t.Id == id);
         }
 
+        public async Task<(TierList Tier, Guid? ImageId)?> GetTierWithImageIdAsync(Guid tierListId)
+        {
+            return await _context.TierLists
+                .Where(t => t.Id == tierListId)
+                .Select(t => new ValueTuple<TierList, Guid?>(t, t.ImageId))
+                .FirstOrDefaultAsync();
+        }
+
         public async Task<IEnumerable<TierList>> GetByUserAsync(Guid userId)
         {
             return await _context.TierLists

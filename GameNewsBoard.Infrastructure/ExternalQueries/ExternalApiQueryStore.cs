@@ -23,6 +23,15 @@ namespace GameNewsBoard.Infrastructure.Queries
                     limit {pageSize};
                     offset {offset};";
             }
+
+            public static string GenerateReleasesBetweenQuery(long startUnix, long endUnix, int limit = 50)
+            {
+                return $@"
+                    fields game.name, game.cover.url, game.platforms.name, date;
+                    where date >= {startUnix} & date <= {endUnix};
+                    sort date asc;
+                    limit {limit};";
+            }
         }
     }
 }

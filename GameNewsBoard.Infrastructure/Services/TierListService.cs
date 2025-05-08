@@ -2,6 +2,7 @@ using AutoMapper;
 using GameNewsBoard.Application.DTOs.Requests;
 using GameNewsBoard.Application.IRepository;
 using GameNewsBoard.Application.IServices;
+using GameNewsBoard.Application.IServices.Images;
 using GameNewsBoard.Application.Responses.DTOs.Responses;
 using GameNewsBoard.Domain.Commons;
 using GameNewsBoard.Domain.Entities;
@@ -13,17 +14,23 @@ namespace GameNewsBoard.Infrastructure.Services
     {
         private readonly ITierListRepository _tierListRepository;
         private readonly IGameRepository _gameRepository;
+        private readonly IUploadedImageRepository _uploadedImageRepository;
+        private readonly IPhysicalImageService _physicalImageService;
         private readonly IMapper _mapper;
         private readonly ILogger<TierListService> _logger;
 
         public TierListService(
             ITierListRepository tierListRepository,
             IGameRepository gameRepository,
+            IUploadedImageRepository uploadedImageRepository,
+            IPhysicalImageService physicalImageService,
             IMapper mapper,
             ILogger<TierListService> logger)
         {
             _tierListRepository = tierListRepository ?? throw new ArgumentNullException(nameof(tierListRepository));
             _gameRepository = gameRepository ?? throw new ArgumentNullException(nameof(gameRepository));
+            _uploadedImageRepository = uploadedImageRepository ?? throw new ArgumentNullException(nameof(uploadedImageRepository));
+            _physicalImageService = physicalImageService ?? throw new ArgumentNullException(nameof(physicalImageService));
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
@@ -33,10 +40,26 @@ namespace GameNewsBoard.Infrastructure.Services
         {
             try
             {
-                var tierList = new TierList(userId, request.Title, request.ImageUrl);
+                var tierList = TierList.Create(
+                    userId,
+                    request.Title,
+                    request.ImageId,
+                    request.ImageUrl
+                );
 
                 await _tierListRepository.AddAsync(tierList);
                 await _tierListRepository.SaveChangesAsync();
+
+                if (request.ImageId.HasValue)
+                {
+                    var image = await _uploadedImageRepository.GetByIdAsync(request.ImageId.Value);
+
+                    if (image != null && !image.IsUsed)
+                    {
+                        image.ImageInUsed();
+                        await _uploadedImageRepository.SaveChangesAsync();
+                    }
+                }
 
                 return Result.Success();
             }
@@ -55,7 +78,7 @@ namespace GameNewsBoard.Infrastructure.Services
 
             try
             {
-                tierList.UpdateInfo(request.NewTitle, request.NewImageUrl);
+                tierList.UpdateInfo(request.Title, request.ImageUrl);
                 await _tierListRepository.SaveChangesAsync();
                 return Result.Success();
             }
@@ -67,12 +90,26 @@ namespace GameNewsBoard.Infrastructure.Services
 
         public async Task<Result> DeleteTierListAsync(Guid tierListId)
         {
-            var tierList = await _tierListRepository.GetByIdAsync(tierListId);
-            if (tierList == null)
+            var tierListData = await _tierListRepository.GetTierWithImageIdAsync(tierListId);
+
+            if (tierListData == null)
                 return Result.Failure("Tier não encontrado.");
+
+            var (tierList, imageId) = tierListData.Value;
+
+            if (imageId.HasValue)
+            {
+                var image = await _uploadedImageRepository.GetByIdAsync(imageId.Value);
+                if (image != null)
+                {
+                    _uploadedImageRepository.Remove(image);
+                    await _physicalImageService.DeleteFileAsync(image.Url);
+                }
+            }
 
             _tierListRepository.Remove(tierList);
             await _tierListRepository.SaveChangesAsync();
+
             return Result.Success();
         }
 

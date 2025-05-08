@@ -9,20 +9,28 @@ public class TierListConfiguration : IEntityTypeConfiguration<TierList>
               builder.HasKey(t => t.Id);
 
               builder.Property(t => t.Title)
-                     .IsRequired()
-                     .HasMaxLength(255);
+                  .IsRequired()
+                  .HasMaxLength(255);
 
               builder.Property(t => t.ImageUrl)
-                     .HasMaxLength(500);
+                  .HasMaxLength(500);
 
-              builder.HasOne(t => t.User)
-                     .WithMany()
-                     .HasForeignKey(t => t.UserId)
-                     .OnDelete(DeleteBehavior.Cascade);
+              builder.Property(t => t.ImageId)
+                  .IsRequired(false);
+
+              builder.HasOne(t => t.Image)
+                  .WithOne()
+                  .HasForeignKey<TierList>(t => t.ImageId)
+                  .OnDelete(DeleteBehavior.SetNull);
+
+               builder.HasOne(t => t.User)
+                  .WithMany()
+                  .HasForeignKey(t => t.UserId)
+                  .OnDelete(DeleteBehavior.Cascade);
 
               builder.HasMany(t => t.Entries)
-                     .WithOne(e => e.TierList)
-                     .HasForeignKey(e => e.TierListId)
-                     .OnDelete(DeleteBehavior.Cascade);
+                  .WithOne(e => e.TierList)
+                  .HasForeignKey(e => e.TierListId)
+                  .OnDelete(DeleteBehavior.Cascade);
        }
 }

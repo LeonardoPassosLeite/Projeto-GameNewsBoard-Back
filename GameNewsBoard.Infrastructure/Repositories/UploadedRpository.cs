@@ -40,5 +40,10 @@ namespace GameNewsBoard.Infrastructure.Repositories
             _context.UploadedImages.Remove(image);
             return Task.CompletedTask;
         }
+
+        public void Remove(UploadedImage image)
+        {
+            _context.UploadedImages.Remove(image);
+        }
     }
 }

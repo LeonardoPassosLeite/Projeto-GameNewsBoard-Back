@@ -22,16 +22,26 @@ public class GameNewsController : ControllerBase
     [HttpGet("{platform}")]
     public async Task<IActionResult> Get(string platform)
     {
+        _logger.LogInformation("Requisição recebida para a plataforma: {Platform}", platform);
+
         if (string.IsNullOrWhiteSpace(platform))
+        {
+            _logger.LogWarning("Parâmetro inválido: O parâmetro 'platform' não foi fornecido.");
             return ApiResponseHelper.CreateError("Parâmetro inválido", "O parâmetro 'platform' é obrigatório.", 400);
+        }
 
         try
         {
             var result = await _newsService.GetLatestNewsAsync(platform);
+            _logger.LogInformation("Notícias para a plataforma {Platform} carregadas com sucesso", platform);
 
             if (result == null || result.Articles.Count == 0)
+            {
+                _logger.LogWarning("Nenhuma notícia encontrada para a plataforma {Platform}", platform);
                 return ApiResponseHelper.CreateError("Notícias não encontradas", $"Nenhuma notícia encontrada para a plataforma '{platform}'.", 404);
+            }
 
+            _logger.LogInformation("Notícias carregadas com sucesso para a plataforma {Platform}", platform);
             return Ok(new ApiResponse<GameNewsResponse>("Notícias carregadas com sucesso.", result));
         }
         catch (Exception ex)

@@ -7,5 +7,10 @@ namespace GameNewsBoard.Domain.Entities
         public string Url { get; set; } = string.Empty;
         public DateTime UploadedAt { get; set; } = DateTime.UtcNow;
         public bool IsUsed { get; set; } = false;
+
+        public void ImageInUsed()
+        {
+            IsUsed = true;
+        }
     }
 }

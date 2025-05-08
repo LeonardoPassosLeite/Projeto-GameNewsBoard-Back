@@ -16,6 +16,7 @@ namespace GameNewsBoard.Infrastructure.Services
         {
             services.AddScoped<IGameNewsService, GameNewsService>();
             services.AddScoped<IGameService, GameService>();
+            services.AddScoped<IGameReleaseService, GameReleaseService>();
             services.AddScoped<IGameRepository, GameRepository>();
             services.AddScoped<IUserRepository, UserRepository>();
 

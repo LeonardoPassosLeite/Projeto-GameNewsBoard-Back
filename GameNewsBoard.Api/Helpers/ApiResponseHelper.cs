@@ -7,6 +7,8 @@ namespace GameNewsBoard.Api.Helpers;
 
 public static class ApiResponseHelper
 {
+    private static readonly ILogger _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger("ApiResponseHelper");
+
     public static ApiResponse<string> CreateSuccess(string message)
     {
         return new ApiResponse<string>
@@ -25,8 +27,18 @@ public static class ApiResponseHelper
         };
     }
 
+    public static ApiResponse<object> CreateEmptySuccess(string message)
+    {
+        return new ApiResponse<object>
+        {
+            Message = message,
+            Data = null!
+        };
+    }
+
     public static ObjectResult CreateError(string message, string? detail = null, int statusCode = 500)
     {
+        _logger.LogError("Erro: {Message}, Detalhes: {Detail}, Status Code: {StatusCode}", message, detail, statusCode);
         var errorResponse = new ApiErrorResponse(message, detail);
         return new ObjectResult(errorResponse)
         {
