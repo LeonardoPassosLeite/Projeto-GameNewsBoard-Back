@@ -2,7 +2,7 @@ using GameNewsBoard.Domain.Enums;
 
 namespace GameNewsBoard.Domain.Entities
 {
-    public class StatusGame
+    public class GameStatus
     {
         public Guid Id { get; private set; }
         public Guid UserId { get; private set; }
@@ -11,9 +11,9 @@ namespace GameNewsBoard.Domain.Entities
         public Game Game { get; private set; } = null!;
         public Status Status { get; private set; }
 
-        private StatusGame() { }
+        private GameStatus() { }
 
-        private StatusGame(Guid userId, int gameId, Status status)
+        private GameStatus(Guid userId, int gameId, Status status)
         {
             Id = Guid.NewGuid();
             UserId = userId;
@@ -21,9 +21,9 @@ namespace GameNewsBoard.Domain.Entities
             Status = status;
         }
 
-        public static StatusGame Create(Guid userId, int gameId, Status status)
+        public static GameStatus Create(Guid userId, int gameId, Status status)
         {
-            return new StatusGame(userId, gameId, status);
+            return new GameStatus(userId, gameId, status);
         }
 
         public void UpdateStatus(Status newStatus)

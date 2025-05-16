@@ -97,7 +97,12 @@ namespace GameNewsBoard.Infrastructure.Repositories
             IQueryable<Game> query = _context.Games;
 
             if (startYear.HasValue && endYear.HasValue)
-                query = query.Where(g => g.Released.Year >= startYear.Value && g.Released.Year <= endYear.Value);
+            {
+                var startDate = new DateTimeOffset(startYear.Value, 1, 1, 0, 0, 0, TimeSpan.Zero);
+                var endDate = new DateTimeOffset(endYear.Value, 12, 31, 23, 59, 59, TimeSpan.Zero);
+
+                query = query.Where(g => g.Released >= startDate && g.Released <= endDate);
+            }
 
             if (!string.IsNullOrWhiteSpace(searchTerm))
             {
@@ -110,6 +115,7 @@ namespace GameNewsBoard.Infrastructure.Repositories
 
             return (games, totalCount);
         }
+
 
         public async Task<List<Game>> GetByTitlesAsync(List<string> titles)
         {

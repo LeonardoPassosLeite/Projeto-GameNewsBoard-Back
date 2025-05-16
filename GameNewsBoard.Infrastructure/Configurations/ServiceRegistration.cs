@@ -32,8 +32,8 @@ namespace GameNewsBoard.Infrastructure.Services
             services.AddScoped<ITierListRepository, TierListRepository>();
 
             //Status
-            services.AddScoped<IStatusGameService, StatusGameService>();
-            services.AddScoped<IStatusGameRepository, StatusGameRepository>();
+            services.AddScoped<IGameStatusService, GameStatusService>();
+            services.AddScoped<IGameStatusRepository, GameStatusRepository>();
 
             services.AddScoped<IUploadedImageService, UploadedImageService>();
             services.AddScoped<IUploadedImageRepository, UploadedImageRepository>();

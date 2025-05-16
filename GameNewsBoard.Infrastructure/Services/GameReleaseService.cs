@@ -2,6 +2,7 @@ using AutoMapper;
 using GameNewsBoard.Application.Exceptions.Api;
 using GameNewsBoard.Application.IServices;
 using GameNewsBoard.Application.Responses.DTOs.Responses;
+using GameNewsBoard.Domain.Enums;
 using GameNewsBoard.Infrastructure.Commons;
 using GameNewsBoard.Infrastructure.Configurations;
 using GameNewsBoard.Infrastructure.ExternalDtos;
@@ -29,28 +30,26 @@ public class GameReleaseService : IgdbApiBaseService, IGameReleaseService
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
-    public async Task<List<GameReleaseResponse>> GetUpcomingGamesAsync(int daysAhead = 7, CancellationToken cancellationToken = default)
+    public async Task<List<GameReleaseResponse>> GetUpcomingGamesAsync(int daysAhead = 7, Platform? platform = null, CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
         var future = now.AddDays(daysAhead);
-
-        return await GetReleasesBetweenAsync(now, future, cancellationToken);
+        return await GetReleasesBetweenAsync(now, future, platform, cancellationToken);
     }
 
-    public async Task<List<GameReleaseResponse>> GetRecentlyReleasedGamesAsync(int daysBack = 7, CancellationToken cancellationToken = default)
+    public async Task<List<GameReleaseResponse>> GetRecentlyReleasedGamesAsync(int daysBack = 7, Platform? platform = null, CancellationToken cancellationToken = default)
     {
         var now = DateTime.UtcNow;
         var past = now.AddDays(-daysBack);
-
-        return await GetReleasesBetweenAsync(past, now, cancellationToken);
+        return await GetReleasesBetweenAsync(past, now, platform, cancellationToken);
     }
 
-    public async Task<List<GameReleaseResponse>> GetReleasesBetweenAsync(DateTime start, DateTime end, CancellationToken cancellationToken = default)
+    public async Task<List<GameReleaseResponse>> GetReleasesBetweenAsync(DateTime start, DateTime end, Platform? platform = null, CancellationToken cancellationToken = default)
     {
         var startUnix = new DateTimeOffset(start).ToUnixTimeSeconds();
         var endUnix = new DateTimeOffset(end).ToUnixTimeSeconds();
 
-        var query = ExternalApiQueryStore.Igdb.GenerateReleasesBetweenQuery(startUnix, endUnix);
+        var query = ExternalApiQueryStore.Igdb.GenerateReleasesBetweenQuery(startUnix, endUnix, platform);
         var request = CreateIgdbRequest(query, "release_dates");
 
         try

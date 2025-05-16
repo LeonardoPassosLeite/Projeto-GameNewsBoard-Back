@@ -1,9 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using GameNewsBoard.Application.IServices;
 using GameNewsBoard.Api.Helpers;
-using GameNewsBoard.Application.Responses.DTOs.Responses;
-using GameNewsBoard.Application.Exceptions.Api;
-using GameNewsBoard.Application.DTOs.Shared;
+using GameNewsBoard.Domain.Enums;
 
 namespace GameNewsBoard.Api.Controllers;
 
@@ -21,11 +19,11 @@ public class GameReleaseController : ControllerBase
     }
 
     [HttpGet("upcoming")]
-    public async Task<IActionResult> GetUpcomingReleases([FromQuery] int daysAhead = 7)
+    public async Task<IActionResult> GetUpcomingReleases([FromQuery] int daysAhead = 7, [FromQuery] Platform? platform = null)
     {
         try
         {
-            var releases = await _gameReleaseService.GetUpcomingGamesAsync(daysAhead);
+            var releases = await _gameReleaseService.GetUpcomingGamesAsync(daysAhead, platform);
 
             if (releases == null || releases.Count == 0)
                 return Ok(ApiResponseHelper.CreateEmptySuccess($"Nenhum jogo será lançado nos próximos {daysAhead} dias."));
@@ -40,11 +38,11 @@ public class GameReleaseController : ControllerBase
     }
 
     [HttpGet("recent")]
-    public async Task<IActionResult> GetRecentReleases([FromQuery] int daysBack = 7)
+    public async Task<IActionResult> GetRecentReleases([FromQuery] int daysBack = 7, [FromQuery] Platform? platform = null)
     {
         try
         {
-            var releases = await _gameReleaseService.GetRecentlyReleasedGamesAsync(daysBack);
+            var releases = await _gameReleaseService.GetRecentlyReleasedGamesAsync(daysBack, platform);
 
             if (releases == null || releases.Count == 0)
                 return Ok(ApiResponseHelper.CreateEmptySuccess($"Nenhum jogo foi lançado nos últimos {daysBack} dias."));

@@ -9,27 +9,27 @@ namespace GameNewsBoard.Api.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-public class StatusGameController : ControllerBase
+public class GameStatusController : ControllerBase
 {
-    private readonly IStatusGameService _statusGameService;
-    private readonly ILogger<StatusGameController> _logger;
+    private readonly IGameStatusService _gameStatusService;
+    private readonly ILogger<GameStatusController> _logger;
 
-    public StatusGameController(
-        IStatusGameService statusGameService,
-        ILogger<StatusGameController> logger)
+    public GameStatusController(
+        IGameStatusService gameStatusService,
+        ILogger<GameStatusController> logger)
     {
-        _statusGameService = statusGameService ?? throw new ArgumentNullException(nameof(statusGameService));
+        _gameStatusService = gameStatusService ?? throw new ArgumentNullException(nameof(gameStatusService));
         _logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
 
     [HttpPut("{gameId}/status")]
     [Authorize]
-    public async Task<IActionResult> SetStatus(int gameId, [FromQuery] Status status)
+    public async Task<IActionResult> SetGameStatus(int gameId, [FromQuery] Status status)
     {
         try
         {
             var userId = User.GetUserId();
-            var result = await _statusGameService.SetStatusAsync(userId, gameId, status);
+            var result = await _gameStatusService.SetGameStatusAsync(userId, gameId, status);
 
             if (!result.IsSuccess)
                 return ApiResponseHelper.CreateError("Erro ao definir status", result.Error);
@@ -45,12 +45,12 @@ public class StatusGameController : ControllerBase
 
     [HttpDelete("{gameId}/status")]
     [Authorize]
-    public async Task<IActionResult> RemoveStatus(int gameId)
+    public async Task<IActionResult> RemoveGameStatus(int gameId)
     {
         try
         {
             var userId = User.GetUserId();
-            var result = await _statusGameService.RemoveStatusAsync(userId, gameId);
+            var result = await _gameStatusService.RemoveGameStatusAsync(userId, gameId);
 
             if (!result.IsSuccess)
                 return ApiResponseHelper.CreateError("Erro ao remover status", result.Error);
@@ -66,12 +66,12 @@ public class StatusGameController : ControllerBase
 
     [HttpGet("me")]
     [Authorize]
-    public async Task<IActionResult> GetMyStatuses()
+    public async Task<IActionResult> GetMyGameStatuses()
     {
         try
         {
             var userId = User.GetUserId();
-            var result = await _statusGameService.GetUserGameStatusesAsync(userId);
+            var result = await _gameStatusService.GetUserGameStatusesAsync(userId);
 
             if (!result.IsSuccess)
                 return ApiResponseHelper.CreateError("Erro ao buscar status", result.Error);

@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace GameNewsBoard.Infrastructure.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20250507081938_NomeDaMigration")]
+    [Migration("20250516151933_NomeDaMigration")]
     partial class NomeDaMigration
     {
         /// <inheritdoc />
@@ -59,7 +59,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                     b.ToTable("Games");
                 });
 
-            modelBuilder.Entity("GameNewsBoard.Domain.Entities.StatusGame", b =>
+            modelBuilder.Entity("GameNewsBoard.Domain.Entities.GameStatus", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
@@ -81,7 +81,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                     b.HasIndex("UserId", "GameId")
                         .IsUnique();
 
-                    b.ToTable("StatusGame");
+                    b.ToTable("GameStatuses");
                 });
 
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierList", b =>
@@ -112,7 +112,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("TierList");
+                    b.ToTable("TierLists");
                 });
 
             modelBuilder.Entity("GameNewsBoard.Domain.Entities.TierListEntry", b =>
@@ -190,7 +190,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("GameNewsBoard.Domain.Entities.StatusGame", b =>
+            modelBuilder.Entity("GameNewsBoard.Domain.Entities.GameStatus", b =>
                 {
                     b.HasOne("GameNewsBoard.Domain.Entities.Game", "Game")
                         .WithMany()

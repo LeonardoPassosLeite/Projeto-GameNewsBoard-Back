@@ -42,7 +42,7 @@ namespace GameNewsBoard.Api.Controllers
                     await _uploadedImageService.MarkImageAsUsedAsync(request.ImageId.Value);
 
                 if (result.IsSuccess)
-                    return Ok(ApiResponseHelper.CreateSuccess(request, "Tier criado com sucesso uhullll"));
+                    return Ok(ApiResponseHelper.CreateSuccess(request, "Tier criado com sucesso"));
 
                 return ApiResponseHelper.CreateError("Erro inesperado", "Falha ao criar tier.");
             }

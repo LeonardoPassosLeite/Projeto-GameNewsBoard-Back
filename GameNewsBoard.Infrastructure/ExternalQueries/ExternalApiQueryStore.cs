@@ -1,3 +1,6 @@
+using System.Text;
+using GameNewsBoard.Domain.Enums;
+
 namespace GameNewsBoard.Infrastructure.Queries
 {
     public static class ExternalApiQueryStore
@@ -24,14 +27,25 @@ namespace GameNewsBoard.Infrastructure.Queries
                     offset {offset};";
             }
 
-            public static string GenerateReleasesBetweenQuery(long startUnix, long endUnix, int limit = 50)
+            public static string GenerateReleasesBetweenQuery(long startUnix, long endUnix, Platform? platform = null, int limit = 50)
             {
-                return $@"
-                    fields game.name, game.cover.url, game.platforms.name, date;
-                    where date >= {startUnix} & date <= {endUnix};
-                    sort date asc;
-                    limit {limit};";
+                var whereClause = $"date >= {startUnix} & date <= {endUnix}";
+
+                if (platform.HasValue && platform.Value != Platform.All)
+                {
+                    whereClause += $" & platform = {(int)platform.Value}";
+                }
+
+                var sb = new StringBuilder();
+                sb.AppendLine("fields game.name, game.cover.url, game.id, platform.name, platform.abbreviation, date;");
+                sb.AppendLine($"where {whereClause};");
+                sb.AppendLine("sort date asc;");
+                sb.AppendLine($"limit {limit};");
+
+                return sb.ToString();
             }
+
+
         }
     }
 }

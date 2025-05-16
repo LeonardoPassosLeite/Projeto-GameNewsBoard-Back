@@ -58,7 +58,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "StatusGame",
+                name: "GameStatuses",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -68,15 +68,15 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_StatusGame", x => x.Id);
+                    table.PrimaryKey("PK_GameStatuses", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_StatusGame_Games_GameId",
+                        name: "FK_GameStatuses_Games_GameId",
                         column: x => x.GameId,
                         principalTable: "Games",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_StatusGame_Users_UserId",
+                        name: "FK_GameStatuses_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -84,7 +84,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "TierList",
+                name: "TierLists",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
@@ -95,15 +95,15 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_TierList", x => x.Id);
+                    table.PrimaryKey("PK_TierLists", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_TierList_UploadedImages_ImageId",
+                        name: "FK_TierLists_UploadedImages_ImageId",
                         column: x => x.ImageId,
                         principalTable: "UploadedImages",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.SetNull);
                     table.ForeignKey(
-                        name: "FK_TierList_Users_UserId",
+                        name: "FK_TierLists_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -129,34 +129,23 @@ namespace GameNewsBoard.Infrastructure.Migrations
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_TierListEntry_TierList_TierListId",
+                        name: "FK_TierListEntry_TierLists_TierListId",
                         column: x => x.TierListId,
-                        principalTable: "TierList",
+                        principalTable: "TierLists",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_StatusGame_GameId",
-                table: "StatusGame",
+                name: "IX_GameStatuses_GameId",
+                table: "GameStatuses",
                 column: "GameId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_StatusGame_UserId_GameId",
-                table: "StatusGame",
+                name: "IX_GameStatuses_UserId_GameId",
+                table: "GameStatuses",
                 columns: new[] { "UserId", "GameId" },
                 unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TierList_ImageId",
-                table: "TierList",
-                column: "ImageId",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_TierList_UserId",
-                table: "TierList",
-                column: "UserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_TierListEntry_GameId",
@@ -170,6 +159,17 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 unique: true);
 
             migrationBuilder.CreateIndex(
+                name: "IX_TierLists_ImageId",
+                table: "TierLists",
+                column: "ImageId",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_TierLists_UserId",
+                table: "TierLists",
+                column: "UserId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_Username",
                 table: "Users",
                 column: "Username",
@@ -180,7 +180,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "StatusGame");
+                name: "GameStatuses");
 
             migrationBuilder.DropTable(
                 name: "TierListEntry");
@@ -189,7 +189,7 @@ namespace GameNewsBoard.Infrastructure.Migrations
                 name: "Games");
 
             migrationBuilder.DropTable(
-                name: "TierList");
+                name: "TierLists");
 
             migrationBuilder.DropTable(
                 name: "UploadedImages");

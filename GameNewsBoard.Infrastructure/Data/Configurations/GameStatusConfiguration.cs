@@ -2,9 +2,9 @@ using GameNewsBoard.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-public class StatusGameConfiguration : IEntityTypeConfiguration<StatusGame>
+public class GameStatusConfiguration : IEntityTypeConfiguration<GameStatus>
 {
-    public void Configure(EntityTypeBuilder<StatusGame> builder)
+    public void Configure(EntityTypeBuilder<GameStatus> builder)
     {
         builder.HasKey(s => s.Id);
 
